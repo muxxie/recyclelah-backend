@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { isAuthenticated } from "./supabaseAuth"; // ✅ moved import to top
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
@@ -47,17 +48,13 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  const httpServer = createServer(app);
-
-  // Removed Replit Auth setup
- import { isAuthenticated } from "./supabaseAuth";
-
-// Example protected route
+// Example protected route using Supabase JWT middleware
 app.get("/api/protected", isAuthenticated, (req, res) => {
   res.json({ message: "You are authenticated", user: (req as any).user });
 });
 
+(async () => {
+  const httpServer = createServer(app);
 
   await registerRoutes(httpServer, app);
 
