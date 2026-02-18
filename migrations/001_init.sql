@@ -1,4 +1,4 @@
--- Drop existing tables if needed (clean slate)
+-- Drop existing tables if needed
 DROP TABLE IF EXISTS wallet_transactions CASCADE;
 DROP TABLE IF EXISTS requests CASCADE;
 DROP TABLE IF EXISTS facilities CASCADE;
@@ -42,7 +42,7 @@ CREATE TABLE facilities (
   address TEXT NOT NULL,
   latitude TEXT,
   longitude TEXT,
-  accepted_materials TEXT[],   -- ✅ corrected to snake_case
+  accepted_materials TEXT[],
   phone TEXT,
   operating_hours TEXT
 );
@@ -68,7 +68,7 @@ CREATE TABLE wallet_transactions (
   amount NUMERIC,
   description TEXT,
   related_request_id INT REFERENCES requests(id),
-  created_at TIMESTAMP DEFAULT now()
+  created_at TIMESTAMP DEFAULT now()   -- ✅ snake_case
 );
 
 -- OTP table
@@ -80,7 +80,7 @@ CREATE TABLE otps (
   otp_hash TEXT,
   verified BOOLEAN DEFAULT false,
   attempts INT DEFAULT 0,
-  created_at TIMESTAMP DEFAULT now(),
+  created_at TIMESTAMP DEFAULT now(),  -- ✅ snake_case
   expires_at TIMESTAMP
 );
 
