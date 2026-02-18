@@ -208,10 +208,11 @@ export class DatabaseStorage implements IStorage {
   await db.insert(facilities).values({
   name: "Test Facility",
   address: "123 Street",
-  acceptedMaterials: { materials: ["plastic", "paper", "metal"] }, // ✅ plain JS object
+  acceptedMaterials: ["plastic", "paper", "metal"], // ✅ plain JS array
   phone: "123456789",
   operatingHours: "9am-5pm"
 });
+
 
 
 
