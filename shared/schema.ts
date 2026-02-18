@@ -17,12 +17,11 @@ export const facilities = pgTable("facilities", {
   address: text("address").notNull(),
   latitude: decimal("latitude", { precision: 10, scale: 7 }).notNull(),
   longitude: decimal("longitude", { precision: 10, scale: 7 }).notNull(),
-  acceptedMaterials: jsonb("accepted_materials").$type<any>(), // ✅ comma here
+  acceptedMaterials: jsonb("accepted_materials").$type<any>(), // ✅ JSONB, not text[]
   phone: text("phone"),
   operatingHours: text("operating_hours"),
   createdAt: timestamp("created_at").defaultNow(),
 });
-
 
 export const marketPrices = pgTable("market_prices", {
   id: serial("id").primaryKey(),
@@ -36,10 +35,10 @@ export const requests = pgTable("requests", {
   sellerId: varchar("seller_id").references(() => users.id).notNull(),
   collectorId: varchar("collector_id").references(() => users.id),
   facilityId: integer("facility_id").references(() => facilities.id),
-  itemTypes: jsonb("item_types").$type<string[]>().notNull(),
+  itemTypes: jsonb("item_types").$type<any>().notNull(), // ✅ JSONB
   estimatedWeight: integer("estimated_weight").notNull(),
   actualWeight: integer("actual_weight"),
-  photos: jsonb("photos").$type<string[]>(),
+  photos: jsonb("photos").$type<any>(), // ✅ JSONB
   address: text("address").notNull(),
   latitude: decimal("latitude", { precision: 10, scale: 7 }).notNull(),
   longitude: decimal("longitude", { precision: 10, scale: 7 }).notNull(),
@@ -62,6 +61,7 @@ export const walletTransactions = pgTable("wallet_transactions", {
   relatedRequestId: integer("related_request_id").references(() => requests.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
 
 export const usersRelations = relations(users, ({ many }) => ({
   requestsAsSeller: many(requests, { relationName: "sellerRequests" }),
