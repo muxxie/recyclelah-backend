@@ -31,7 +31,7 @@ export class DatabaseStorage implements IStorage {
     await db.insert(facilities).values({
       name: "Test Facility",
       address: "123 Street",
-      acceptedMaterials: ["plastic", "paper", "metal"], // ✅ plain array
+      acceptedMaterials: ["plastic", "paper", "metal"], // ✅ plain array, ORM serializes to JSONB
       phone: "123456789",
       operatingHours: "9am-5pm"
     });
