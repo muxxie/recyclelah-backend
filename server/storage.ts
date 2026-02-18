@@ -208,13 +208,13 @@ export class DatabaseStorage implements IStorage {
   await db.insert(facilities).values({
   name: "Test Facility",
   address: "123 Street",
-  acceptedMaterials: JSON.stringify(["plastic", "paper", "metal"]), // ✅ stored as proper JSON
+  acceptedMaterials: JSON.stringify(["plastic", "paper", "metal"]), // ✅ valid JSON for jsonb column
   phone: "123456789",
   operatingHours: "9am-5pm"
 });
 
-}
 
+}
 
   // Market Prices
   async getMarketPrices() {
