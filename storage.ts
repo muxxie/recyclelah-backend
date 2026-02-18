@@ -182,4 +182,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllWalletTransactions() {
-    return db.select().
+    return
+  }
+}
+
