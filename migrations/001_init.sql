@@ -1,84 +1,92 @@
+-- Drop existing tables if needed (clean slate)
+DROP TABLE IF EXISTS wallet_transactions CASCADE;
+DROP TABLE IF EXISTS requests CASCADE;
+DROP TABLE IF EXISTS facilities CASCADE;
+DROP TABLE IF EXISTS otps CASCADE;
+DROP TABLE IF EXISTS market_prices CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 -- Users table
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
   id UUID PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   username TEXT UNIQUE NOT NULL,
   password TEXT,
-  firstName TEXT,
-  lastName TEXT,
+  first_name TEXT,
+  last_name TEXT,
   role TEXT DEFAULT 'seller',
   phone TEXT,
-  vehicleType TEXT,
+  vehicle_type TEXT,
   gender TEXT,
-  icNumber TEXT,
-  icHash TEXT,
-  icFrontPhoto TEXT,
-  icBackPhoto TEXT,
-  icFrontUrl TEXT,
-  icBackUrl TEXT,
-  verificationStatus TEXT DEFAULT 'pending',
-  phoneVerified BOOLEAN DEFAULT false,
-  emailVerified BOOLEAN DEFAULT false,
+  ic_number TEXT,
+  ic_hash TEXT,
+  ic_front_photo TEXT,
+  ic_back_photo TEXT,
+  ic_front_url TEXT,
+  ic_back_url TEXT,
+  verification_status TEXT DEFAULT 'pending',
+  phone_verified BOOLEAN DEFAULT false,
+  email_verified BOOLEAN DEFAULT false,
   banned BOOLEAN DEFAULT false,
-  banReason TEXT,
+  ban_reason TEXT,
   balance NUMERIC DEFAULT 0,
   latitude TEXT,
   longitude TEXT,
-  isOnline BOOLEAN DEFAULT false
+  is_online BOOLEAN DEFAULT false
 );
 
 -- Facilities table
-CREATE TABLE IF NOT EXISTS facilities (
+CREATE TABLE facilities (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   address TEXT NOT NULL,
   latitude TEXT,
   longitude TEXT,
-  acceptedMaterials TEXT[],
+  accepted_materials TEXT[],   -- ✅ corrected to snake_case
   phone TEXT,
-  operatingHours TEXT
+  operating_hours TEXT
 );
 
 -- Requests table
-CREATE TABLE IF NOT EXISTS requests (
+CREATE TABLE requests (
   id SERIAL PRIMARY KEY,
-  sellerId UUID REFERENCES users(id),
-  collectorId UUID REFERENCES users(id),
-  facilityId INT REFERENCES facilities(id),
-  itemTypes TEXT[],
+  seller_id UUID REFERENCES users(id),
+  collector_id UUID REFERENCES users(id),
+  facility_id INT REFERENCES facilities(id),
+  item_types TEXT[],
   status TEXT DEFAULT 'pending',
-  actualWeight NUMERIC,
-  totalValue NUMERIC,
+  actual_weight NUMERIC,
+  total_value NUMERIC,
   commission NUMERIC
 );
 
 -- Wallet transactions
-CREATE TABLE IF NOT EXISTS wallet_transactions (
+CREATE TABLE wallet_transactions (
   id SERIAL PRIMARY KEY,
-  userId UUID REFERENCES users(id),
+  user_id UUID REFERENCES users(id),
   type TEXT,
   amount NUMERIC,
   description TEXT,
-  relatedRequestId INT REFERENCES requests(id),
-  createdAt TIMESTAMP DEFAULT now()
+  related_request_id INT REFERENCES requests(id),
+  created_at TIMESTAMP DEFAULT now()
 );
 
 -- OTP table
-CREATE TABLE IF NOT EXISTS otps (
+CREATE TABLE otps (
   id SERIAL PRIMARY KEY,
-  userId UUID REFERENCES users(id),
+  user_id UUID REFERENCES users(id),
   type TEXT,
   target TEXT,
-  otpHash TEXT,
+  otp_hash TEXT,
   verified BOOLEAN DEFAULT false,
   attempts INT DEFAULT 0,
-  createdAt TIMESTAMP DEFAULT now(),
-  expiresAt TIMESTAMP
+  created_at TIMESTAMP DEFAULT now(),
+  expires_at TIMESTAMP
 );
 
 -- Market prices
-CREATE TABLE IF NOT EXISTS market_prices (
+CREATE TABLE market_prices (
   id SERIAL PRIMARY KEY,
-  materialType TEXT UNIQUE NOT NULL,
-  pricePerKg NUMERIC NOT NULL
+  material_type TEXT UNIQUE NOT NULL,
+  price_per_kg NUMERIC NOT NULL
 );
