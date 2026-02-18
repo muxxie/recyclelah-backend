@@ -32,7 +32,8 @@ CREATE TABLE users (
   balance NUMERIC DEFAULT 0,
   latitude TEXT,
   longitude TEXT,
-  is_online BOOLEAN DEFAULT false
+  is_online BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT now()
 );
 
 -- Facilities table
@@ -44,7 +45,7 @@ CREATE TABLE facilities (
   longitude TEXT,
   accepted_materials TEXT[],
   phone TEXT,
-  operating_hours TEXT
+  operating_hours TEXT,
   created_at TIMESTAMP DEFAULT now()
 );
 
@@ -58,7 +59,8 @@ CREATE TABLE requests (
   status TEXT DEFAULT 'pending',
   actual_weight NUMERIC,
   total_value NUMERIC,
-  commission NUMERIC
+  commission NUMERIC,
+  created_at TIMESTAMP DEFAULT now()
 );
 
 -- Wallet transactions
@@ -69,7 +71,7 @@ CREATE TABLE wallet_transactions (
   amount NUMERIC,
   description TEXT,
   related_request_id INT REFERENCES requests(id),
-  created_at TIMESTAMP DEFAULT now()   -- ✅ snake_case
+  created_at TIMESTAMP DEFAULT now()
 );
 
 -- OTP table
@@ -81,7 +83,7 @@ CREATE TABLE otps (
   otp_hash TEXT,
   verified BOOLEAN DEFAULT false,
   attempts INT DEFAULT 0,
-  created_at TIMESTAMP DEFAULT now(),  -- ✅ snake_case
+  created_at TIMESTAMP DEFAULT now(),
   expires_at TIMESTAMP
 );
 
@@ -89,5 +91,6 @@ CREATE TABLE otps (
 CREATE TABLE market_prices (
   id SERIAL PRIMARY KEY,
   material_type TEXT UNIQUE NOT NULL,
-  price_per_kg NUMERIC NOT NULL
+  price_per_kg NUMERIC NOT NULL,
+  created_at TIMESTAMP DEFAULT now()
 );
