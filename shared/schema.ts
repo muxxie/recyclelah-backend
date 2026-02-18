@@ -17,11 +17,12 @@ export const facilities = pgTable("facilities", {
   address: text("address").notNull(),
   latitude: decimal("latitude", { precision: 10, scale: 7 }).notNull(),
   longitude: decimal("longitude", { precision: 10, scale: 7 }).notNull(),
-  acceptedMaterials: jsonb("accepted_materials").$type<{ materials: string[] }>()
+  acceptedMaterials: jsonb("accepted_materials").$type<any>(), // ✅ comma here
   phone: text("phone"),
   operatingHours: text("operating_hours"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
 
 export const marketPrices = pgTable("market_prices", {
   id: serial("id").primaryKey(),
