@@ -17,7 +17,7 @@ export const facilities = pgTable("facilities", {
   address: text("address").notNull(),
   latitude: decimal("latitude", { precision: 10, scale: 7 }).notNull(),
   longitude: decimal("longitude", { precision: 10, scale: 7 }).notNull(),
-  acceptedMaterials: jsonb("accepted_materials").$type<{ materials: string[] }>();
+  acceptedMaterials: jsonb("accepted_materials").$type<{ materials: string[] }>()
   phone: text("phone"),
   operatingHours: text("operating_hours"),
   createdAt: timestamp("created_at").defaultNow(),
