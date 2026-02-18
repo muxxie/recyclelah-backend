@@ -232,15 +232,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async seedFacilities(data: any[]) {
-    if ((await this.getFacilities()).length === 0) {
-      const formatted = data.map(f => ({
-        ...f,
-        // Convert JS array to Postgres array literal
-        acceptedMaterials: `{${f.acceptedMaterials.join(",")}}`
-      }));
-      await db.insert(facilities).values(formatted);
-    }
+  if ((await this.getFacilities()).length === 0) {
+    const formatted = data.map(f => ({
+      ...f,
+      // Pass a real array, not a string
+      acceptedMaterials: f.acceptedMaterials
+    }));
+    await db.insert(facilities).values(formatted);
   }
+}
+
 
   async seedMarketPrices(data: any[]) {
     if ((await this.getMarketPrices()).length === 0) {
