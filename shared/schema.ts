@@ -92,3 +92,20 @@ export const insertRequestSchema = createInsertSchema(requests).omit({
 export const insertFacilitySchema = createInsertSchema(facilities).omit({ id: true, createdAt: true });
 export const insertMarketPriceSchema = createInsertSchema(marketPrices).omit({ id: true, updatedAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true, balance: true, isOnline: true, verificationStatus: true });
+
+// ✅ Export registerSchema so routes.ts can import it
+export const registerSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits").regex(/^(\+?6?0)\d{8,10}$/, "Enter a valid Malaysian phone number"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.enum(["seller", "collector"]),
+  vehicleType: z.string().optional(),
+  gender: z.enum(["male", "female"]).optional(),
+  icNumber: z.string().length(12),
+  icFrontPhoto: z.string().min(1, "IC front photo is required"),
+  icBackPhoto: z.string().min(1, "IC back photo is required"),
+});
+
+export type RegisterInput = z.infer<typeof registerSchema>;
