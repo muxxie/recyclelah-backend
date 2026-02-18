@@ -45,6 +45,7 @@ CREATE TABLE facilities (
   accepted_materials TEXT[],
   phone TEXT,
   operating_hours TEXT
+  created_at TIMESTAMP DEFAULT now()
 );
 
 -- Requests table
