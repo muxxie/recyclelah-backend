@@ -181,8 +181,73 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(walletTransactions).where(eq(walletTransactions.userId, userId)).orderBy(desc(walletTransactions.createdAt));
   }
 
-  async getAllWalletTransactions() {
-    return
+    async getAllWalletTransactions() {
+    return db.select().from(walletTransactions).orderBy(desc(walletTransactions.createdAt));
   }
-}
+
+  async createWalletTransaction(tx: InsertWalletTransaction) {
+    return (await db.insert(walletTransactions).values(tx).returning())[0];
+  }
+
+  async updateUserBalance(userId: string, amount: number) {
+    return (await db.update(users).set({
+      balance: sql`CAST(COALESCE(${users.balance}, '0') AS DECIMAL) + ${amount}`
+    }).where(eq(users.id, userId)).returning())[0];
+  }
+
+  async getStats() {
+    const reqs = await db.select().from(requests).where(eq(requests.status, "completed"));
+    const totalJobs = reqs.length;
+    const totalWeight = reqs.reduce((s, r) => s + Number(r.actualWeight || 0), 0);
+    const totalPayout = reqs.reduce((s, r) => s + Number(r.totalPayout || 0), 0);
+    const totalCommission = reqs.reduce((s, r) => s + Number(r.commissionAmount || 0), 0);
+    const totalCollectorEarnings = totalPayout - totalCommission;
+    return { totalJobs, totalWeight, totalPayout, totalCommission, totalCollectorEarnings };
+  }
+
+  async createOtp(data: { userId: string; type: string; target: string; otpHash: string; expiresAt: Date }) {
+    return (await db.insert(otpVerifications).values(data).returning())[0];
+  }
+
+  async getLatestOtp(userId: string, type: string, target: string) {
+    const results = await db.select().from(otpVerifications)
+      .where(and(
+        eq(otpVerifications.userId, userId),
+        eq(otpVerifications.type, type),
+        eq(otpVerifications.target, target),
+      ))
+      .orderBy(desc(otpVerifications.createdAt))
+      .limit(1);
+    return results[0];
+  }
+
+  async markOtpVerified(id: number) {
+    await db.update(otpVerifications).set({ verified: true }).where(eq(otpVerifications.id, id));
+  }
+
+  async incrementOtpAttempts(id: number) {
+    await db.update(otpVerifications).set({
+      attempts: sql`${otpVerifications.attempts} + 1`
+    }).where(eq(otpVerifications.id, id));
+  }
+
+  async seedFacilities(data: any[]) {
+    if ((await this.getFacilities()).length === 0) {
+      const formatted = data.map(f => ({
+        ...f,
+        // Convert JS array to Postgres array literal
+        acceptedMaterials: `{${f.acceptedMaterials.join(",")}}`
+      }));
+      await db.insert(facilities).values(formatted);
+    }
+  }
+
+  async seedMarketPrices(data: any[]) {
+    if ((await this.getMarketPrices()).length === 0) {
+      await db.insert(marketPrices).values(data);
+    }
+  }
+} // <-- closes DatabaseStorage class
+
+export const storage = new DatabaseStorage(); // <-- final export
 
