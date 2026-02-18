@@ -149,7 +149,7 @@ export class DatabaseStorage implements IStorage {
 
     // Requests
   async createRequest(request: InsertRequest) {
-    return (await db.insert(requests).values(request).returning())[0];
+    return (await db.insert(requests).values(requests).returning())[0];
   }
 
   async getRequest(id: number) {
@@ -204,12 +204,17 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(facilities);
   }
 
-  async seedFacilities(data: InsertFacility[]) {
-    const existing = await this.getFacilities();
-    if (existing.length === 0) {
-      await db.insert(facilities).values(data);
-    }
-  }
+  async seedFacilities() {
+  await db.insert(facilities).values({
+  name: "Test Facility",
+  address: "123 Street",
+  acceptedMaterials: JSON.stringify(["plastic", "paper", "metal"]), // ✅ stored as proper JSON
+  phone: "123456789",
+  operatingHours: "9am-5pm"
+});
+
+}
+
 
   // Market Prices
   async getMarketPrices() {
